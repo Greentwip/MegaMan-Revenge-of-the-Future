@@ -4,16 +4,27 @@ using UnityEngine;
 
 public class LevelAudio : MonoBehaviour {
 
+    public bool active = true;
+
     public AudioClip music;
     public bool isLoop;
 
 	// Use this for initialization
 	void Start () {
-        SoundManager.Instance.PlayBGM(music, isLoop);
+        if (active)
+        {
+            PlayMusicBgm();
+        }
+        
 	}
-	
-	// Update is called once per frame
-	void Update () {
+
+    public void PlayMusicBgm()
+    {
+        SoundManager.Instance.PlayBGM(music, isLoop);
+    }
+
+    // Update is called once per frame
+    void Update () {
 		
 	}
 }

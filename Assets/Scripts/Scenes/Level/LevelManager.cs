@@ -14,9 +14,6 @@ public class LevelManager : MonoBehaviour {
     [SerializeField]
     private AudioClip victoryMusic;
 
-    bool playerMorphBegin = false;
-    bool playerMophing = false;
-
     enum SequenceState
     {
         TeleportIn,
@@ -30,43 +27,28 @@ public class LevelManager : MonoBehaviour {
 
     SequenceState sequenceState;
 
-    static LevelManager Instance { get; set; }
-
-    void Awake()
-    {
-        //Check if there is already an instance of SoundManager
-        if (Instance == null)
-            //if not, set it to this.
-            Instance = this;
-        //If instance already exists:
-        else if (Instance != this)
-            //Destroy this, this enforces our singleton pattern so there can only be one instance of SoundManager.
-            Destroy(gameObject);
-
-        //Set to DontDestroyOnLoad so that it won't be destroyed when reloading our scene.
-        DontDestroyOnLoad(gameObject);
-    }
-
-
     // Use this for initialization
     void Start () {
-        sequenceState = SequenceState.None;
-
-        BeginTeleportIn();
+        StartLevel();
 	}
+
+    // start level
+    public void StartLevel()
+    {
+        player.startup = true;
+
+        GetComponent<LevelAudio>().PlayMusicBgm();
+        sequenceState = SequenceState.None;
+        BeginTeleportIn();
+    }
 
     void BeginTeleportIn()
     {
         sequenceState = SequenceState.TeleportIn;
-        StartCoroutine(TeleportRoutineIn());
+        StartCoroutine(TeleportInRoutine());
     }
-
-    void BeginTeleportOut()
-    {
-        sequenceState = SequenceState.VictoryMusic;
-    }
-
-    IEnumerator TeleportRoutineIn()
+        
+    IEnumerator TeleportInRoutine()
     {
         player.GetComponent<Rigidbody2D>().isKinematic = true;
 
@@ -98,48 +80,34 @@ public class LevelManager : MonoBehaviour {
         player.GetComponent<Rigidbody2D>().isKinematic = false;
     }
 
-    IEnumerator MorphEndRoutine(float time)
+    IEnumerator MorphInEndRoutine(float time)
     {
         yield return new WaitForSeconds(time);
 
         player.teleporting = false;
         player.morphing = false;
         player.frozen = false;
+        player.startup = false;
     }
 
-    void OnMusicEnd()
+    // finish level
+
+    public void FinishLevel()
     {
         player.frozen = true;
-        player.morphing = false;
-        player.teleporting = false;
-        player.reverseMorphing = true;
 
-        sequenceState = SequenceState.MorphOut;
-
-    }
-
-    IEnumerator MorphBeginRoutine(float time)
-    {
-
-
-        yield return new WaitForSeconds(time);
-
-        player.frozen = true;
-        player.morphing = false;
-        player.teleporting = true;
-        player.reverseMorphing = false;
-
-        var velocity = player.GetComponent<Rigidbody2D>().velocity;
-
-        velocity.y = 256;
-
-        player.GetComponent<Rigidbody2D>().velocity = velocity;
-
+        /*if (CurrentGame.Instance.CurrentLevel.IsBossBeaten)
+        {
+            
+        }
+        else
+        {
+            
+        }*/
     }
 
     private void Update()
     {
-
         var playerAnimator = player.GetComponent<Animator>();
 
         if (player.teleporting)
@@ -168,14 +136,11 @@ public class LevelManager : MonoBehaviour {
         {
             playerAnimator.SetBool("Reverse Morphing", false);
         }
-
-
     }
 
     private void LateUpdate()
     {
         var playerAnimator = player.GetComponent<Animator>();
-
 
         switch (sequenceState)
         {
@@ -191,67 +156,23 @@ public class LevelManager : MonoBehaviour {
                     player.teleporting = true;
                     player.morphing = false;
                 }
-                break;
+            break;
 
             case SequenceState.MorphIn:
-                {
-                    var info =
-                    playerAnimator.GetCurrentAnimatorClipInfo(0);
+            {
+                var info =
+                playerAnimator.GetCurrentAnimatorClipInfo(0);
 
-                    var clipLength = info[0].clip.length;
+                var clipLength = info[0].clip.length;
 
-                    var coroutine = MorphEndRoutine(clipLength);
+                var coroutine = MorphInEndRoutine(clipLength);
 
-                    StartCoroutine(coroutine);
+                StartCoroutine(coroutine);
 
-                    sequenceState = SequenceState.None;
-                }
-
-                break;
-
-            case SequenceState.VictoryMusic:
-                player.frozen = true;
-                player.GetComponent<Rigidbody2D>().isKinematic = true;
-
-                var velocity = player.GetComponent<Rigidbody2D>().velocity;
-                velocity.x = 0;
-                velocity.y = 0;
-                player.GetComponent<Rigidbody2D>().velocity = velocity;
-
-                SoundManager.Instance.PlayBGM(victoryMusic, false, OnMusicEnd);
                 sequenceState = SequenceState.None;
-                break;
+            }
+            break;
 
-            case SequenceState.MorphOut:
-                {
-                    // give one extra cycle for animations to set
-                    sequenceState = SequenceState.PostMorphOut;
-                }
-                break;
-            case SequenceState.PostMorphOut:
-                {
-                    var info =
-                    playerAnimator.GetCurrentAnimatorClipInfo(0);
-
-                    var clipLength = info[0].clip.length;
-
-                    var coroutine = MorphBeginRoutine(clipLength);
-
-                    StartCoroutine(coroutine);
-                }
-                break;
-            case SequenceState.TeleportOut:
-                if (player.obstacleDetector.collisions.below)
-                {
-                    player.reverseMorphing = true;
-                }
-                else
-                {
-                    player.frozen = true;
-                    player.teleporting = true;
-                    player.reverseMorphing = false;
-                }
-                break;
 
         }
     }

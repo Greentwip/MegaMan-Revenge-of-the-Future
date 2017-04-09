@@ -106,21 +106,21 @@ public class CameraTrigger : MonoBehaviour
         {
             float cameraTime = (Time.time - switchStartTime) / cameraSwitchDuration;
 
-            float cameraX = Mathf.SmoothStep(transform.position.x,
+            float cameraX = Mathf.SmoothStep(currentCamera.transform.position.x,
                                              switchTargetPosition.x,
                                              cameraTime);
 
-            float cameraY = Mathf.SmoothStep(transform.position.y,
+            float cameraY = Mathf.SmoothStep(currentCamera.transform.position.y,
                                              switchTargetPosition.y,
                                              cameraTime);
 
-            float cameraZ = transform.position.z;
+            float cameraZ = currentCamera.transform.position.z;
 
 
-            transform.position = new Vector3(cameraX, cameraY, cameraZ);
+            currentCamera.transform.position = new Vector3(cameraX, cameraY, cameraZ);
 
 
-            if (this.transform.position == switchTargetPosition)
+            if (currentCamera.transform.position == switchTargetPosition)
             {
                 this.switching = false;
             }

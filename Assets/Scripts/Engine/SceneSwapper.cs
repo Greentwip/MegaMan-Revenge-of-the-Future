@@ -24,18 +24,18 @@ public class SceneSwapper : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    void SwitchLevel(Object scene)
+    void SwitchLevel(string scene)
     {
-        SceneManager.LoadScene(scene.name);
+        SceneManager.LoadScene(scene);
         FadeManager.Instance.Fade(false, 1.5f, null);
     }
 
-    void SwitchLevelFade(Object scene)
+    void SwitchLevelFade(string scene)
     {
         FadeManager.Instance.Fade(true, 1.5f, SwitchLevel, scene);
     }
 
-    public void SwapScene(Object scene)
+    public void SwapScene(string scene)
     {
         SwitchLevelFade(scene);
     }

@@ -59,6 +59,11 @@ public class StageSelector : MonoBehaviour {
             || Application.platform == RuntimePlatform.OSXEditor
             || Application.platform == RuntimePlatform.OSXPlayer)
         {
+            if (Input.GetButtonDown("Fire"))
+            {
+                SwapScene(currentTransform.GetComponent<SelectionMug>().introScene);
+            }
+
             if(Input.GetButtonDown("Right"))
             {
                 if(currentTransform == drwilly
@@ -156,6 +161,16 @@ public class StageSelector : MonoBehaviour {
                 {
                     MoveToTransform(boomerman);
                 }
+
+                if(currentTransform == militaryman)
+                {
+                    MoveToTransform(iceman);
+                }
+
+                if(currentTransform == vineman)
+                {
+                    MoveToTransform(boomerman);
+                }
             }
 
             if (Input.GetButtonDown("Down"))
@@ -179,15 +194,37 @@ public class StageSelector : MonoBehaviour {
                 {
                     MoveToTransform(drwilly);
                 }
+
+                if (currentTransform == militaryman)
+                {
+                    MoveToTransform(windman);
+                }
+
+                if (currentTransform == vineman)
+                {
+                    MoveToTransform(fastman);
+                }
             }
         }
 
 	}
 
-    void MoveToTransform(Transform new_transform)
+    public void MoveToTransform(Transform new_transform)
     {
         this.currentTransform = new_transform;
         this.transform.position = this.currentTransform.position;
         SoundManager.Instance.PlaySingle(selectSound);
+    }
+
+    bool swapping = false;
+    public void SwapScene(string scene)
+    {
+        if (!swapping)
+        {
+            swapping = true;
+            SoundManager.Instance.PlaySingle(selectedSound);
+            SceneSwapper.Instance.SwapScene(scene);
+        }
+        
     }
 }

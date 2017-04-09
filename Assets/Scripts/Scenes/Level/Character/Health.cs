@@ -74,6 +74,7 @@ public class Health : MonoBehaviour
 
         if (currentHealth <= 0.0f)
         {
+            currentHealth = 0.0f;
             IsDead = true;
         }
     }

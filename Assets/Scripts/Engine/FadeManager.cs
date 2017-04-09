@@ -9,19 +9,20 @@ public class FadeManager : MonoBehaviour {
 
     public Image fadeImage;
 
-    private bool isInTransition;
+    [System.NonSerialized]
+    public bool isInTransition;
     private float transition;
     private bool isShowing;
     private float duration;
     private Color fadeColor;
 
     public delegate void onFadeEndDelegate();
-    public delegate void onFadeEndWithParametersDelegate(Object parameters);
+    public delegate void onFadeEndWithParametersDelegate(string parameters);
 
     onFadeEndDelegate onFadeEnd;
     onFadeEndWithParametersDelegate onFadeEndWithParameters;
 
-    Object parameters;
+    string parameters;
 
     bool isFadeWithParameters;
 
@@ -38,6 +39,15 @@ public class FadeManager : MonoBehaviour {
 
         //Set SoundManager to DontDestroyOnLoad so that it won't be destroyed when reloading our scene.
         DontDestroyOnLoad(gameObject);
+    }
+
+    private void Start()
+    {
+        var imageColor = fadeImage.color;
+
+        imageColor.a = 0;
+
+        fadeImage.color = imageColor;
     }
 
     public void Fade(bool showing, float duration, onFadeEndDelegate onFadeEnd)
@@ -58,7 +68,7 @@ public class FadeManager : MonoBehaviour {
     public void Fade(bool showing, 
                      float duration, 
                      onFadeEndWithParametersDelegate onFadeEnd, 
-                     Object parameters)
+                     string parameters)
     {
         this.isShowing = showing;
         this.isInTransition = true;

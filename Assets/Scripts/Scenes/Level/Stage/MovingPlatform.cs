@@ -7,7 +7,6 @@ public class MovingPlatform : MonoBehaviour {
     public float completionTime = 4.0f;
 
 
-    Vector3 previousPosition;
     //Hashtable onPlatform = new Hashtable();
 
     Player player;
@@ -20,7 +19,6 @@ public class MovingPlatform : MonoBehaviour {
         Animator controller = GetComponent<Animator>();
         controller.SetBool("Playing", true);
 
-        previousPosition = this.transform.position;
 	}
 
     void OnMoveBegin()
@@ -53,20 +51,19 @@ public class MovingPlatform : MonoBehaviour {
 
     }
 
-
-    void OnTriggerEnter2D(Collider2D other)
+    void OnCollisionEnter2D(Collision2D other)
     {
-        if (other.tag == "Player")
+        if (other.collider.tag == "Player")
         {
-            player = other.GetComponent<Player>();
+            player = other.collider.GetComponent<Player>();
             player.transform.parent = this.transform;
         }
 
     }
 
-    void OnTriggerExit2D(Collider2D other)
+    void OnCollisionExit2D(Collision2D other)
     {
-        if (other.tag == "Player")
+        if (other.collider.tag == "Player")
         {
             player.transform.parent = null;
             player = null;

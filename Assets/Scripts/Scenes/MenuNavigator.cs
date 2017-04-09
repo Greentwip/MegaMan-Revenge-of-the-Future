@@ -30,7 +30,7 @@ public class MenuNavigator : MonoBehaviour {
     void Update () {
         if (Input.GetButtonDown("Cancel"))
         {
-            if (!this.navigating)
+            if (!this.navigating && !FadeManager.Instance.isInTransition)
             {
                 this.navigating = true;
                 this.SwitchLevelFade();

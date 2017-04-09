@@ -15,19 +15,26 @@ public abstract class Enemy : MonoBehaviour {
     public AudioClip damageSound    = null;
     public AudioClip defeatedSound  = null;
     public bool dropsItem           = true;
+    public Collider2D attackCollider = null;
 
     uint currentHealth              = 0;
-    bool idleReappear               = false;
 
     Vector3 initialPosition         = Vector3.zero;
 
     public Status status;
 
     // Use this for initialization
-    void Start () {
+    protected virtual void Start () {
         this.currentHealth = health;
         //this.status = Status.Inactive;
         this.initialPosition = this.transform.position;
+    }
+
+    public void Restart()
+    {
+        this.status = Status.Inactive;
+        this.transform.position = initialPosition;
+        SetVisible(false);
     }
 
     void UpdateStatus()
@@ -42,13 +49,14 @@ public abstract class Enemy : MonoBehaviour {
             {
                 this.status = Status.Fighting;
                 this.currentHealth = this.health;
+                attackCollider.GetComponent<Weapon>().active = true;
             }
             else if (this.status == Status.Defeated)
             {
                 this.OnDefeated();
-                //this.SetVisible(false);
-                //this.status = Status.Inactive;
-                //this.transform.position = initialPosition;
+                this.status = Status.Inactive;
+                this.transform.position = initialPosition;
+                attackCollider.GetComponent<Weapon>().active = false;
             }
         }
         else
@@ -64,6 +72,7 @@ public abstract class Enemy : MonoBehaviour {
                     this.status = Status.Active;
                     this.transform.position = initialPosition;
                 }
+                
             }
         }
         
@@ -96,12 +105,6 @@ public abstract class Enemy : MonoBehaviour {
         GetComponent<SpriteRenderer>().color = color;
     }
 
-    private void OnDefeated()
-    {
-        Destroy(this.gameObject);
-        //@TODO item spawn
-    }
-
     private void OnTriggerEnter2D(Collider2D other)
     {
         if(other.tag == "PlayerWeapon")
@@ -120,6 +123,8 @@ public abstract class Enemy : MonoBehaviour {
                 else
                 {
                     SoundManager.Instance.PlaySingle(defeatedSound);
+                    StopAllCoroutines();
+                    SetVisible(false);
                     this.status = Status.Defeated;
                 }
             }            
@@ -141,15 +146,25 @@ public abstract class Enemy : MonoBehaviour {
 
     private IEnumerator BlinkRoutine()
     {
-        SetVisible(true);
 
-        yield return new WaitForSeconds(0.1f);
+        for(int i = 0; i<4; ++i)
+        {
+            SetVisible(true);
 
-        SetVisible(false);
+            yield return new WaitForSeconds(0.05f);
 
-        yield return new WaitForSeconds(0.1f);
+            SetVisible(false);
 
-        SetVisible(true);
+            yield return new WaitForSeconds(0.05f);
+
+            SetVisible(true);
+        }
+
+    }
+
+    protected virtual void OnDefeated()
+    {
+        //@TODO item spawn
     }
 
     protected abstract void Logic();

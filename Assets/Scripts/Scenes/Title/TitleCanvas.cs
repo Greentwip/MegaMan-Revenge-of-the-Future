@@ -10,12 +10,17 @@ public class TitleCanvas : MonoBehaviour {
 
     public ExitConfirmationPanel exitConfirmationPanel;
 
-    public Object nextLevel;
+    public string nextLevel;
 
     private bool transitioning;
 
     // Use this for initialization
     void Start () {
+
+        if(CurrentGame.Instance.PlayerLives == 0)
+        {
+            CurrentGame.Instance.PlayerLives = 3;
+        }
 
         EventTrigger trigger = GetComponent<EventTrigger>();
         EventTrigger.Entry entry = new EventTrigger.Entry();

@@ -15,7 +15,7 @@ public class ParallaxController : MonoBehaviour {
 
     public Text bossName;
 
-    public Object levelScene;
+    public string levelScene;
 
     private string bossNameString;
 

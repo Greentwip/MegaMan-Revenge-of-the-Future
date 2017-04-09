@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Bullet : MonoBehaviour {
-
-    public uint power = 10;
+public class Bullet : Weapon {
 
     private void OnBecameInvisible()
     {

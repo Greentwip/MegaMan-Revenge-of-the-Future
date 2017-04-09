@@ -7,7 +7,6 @@ public class CollisionDetector : MonoBehaviour
 
     public LayerMask collisionMask;
 
-    const float skinWidth = 0.0f;
     public int horizontalRayCount = 4;
     public int verticalRayCount = 4;
 
@@ -18,6 +17,8 @@ public class CollisionDetector : MonoBehaviour
     RaycastOrigins raycastOrigins;
     public CollisionInfo collisions;
 
+    const float raySize = 1.0f;
+
     void Start()
     {
         boxCollider = GetComponent<BoxCollider2D>();
@@ -26,6 +27,8 @@ public class CollisionDetector : MonoBehaviour
 
     public void Detect()
     {
+        CalculateRaySpacing();
+
         UpdateRaycastOrigins();
         collisions.Reset();
 
@@ -35,7 +38,7 @@ public class CollisionDetector : MonoBehaviour
 
     void HorizontalCollisions()
     {
-        float rayLength = skinWidth;
+        float rayLength = raySize;
 
         for (int i = 0; i < horizontalRayCount; i++)
         {
@@ -43,11 +46,11 @@ public class CollisionDetector : MonoBehaviour
             rayOrigin += Vector2.up * (horizontalRaySpacing * i);
             RaycastHit2D hit = Physics2D.Raycast(rayOrigin, 
                                                  Vector2.left, 
-                                                 rayLength + 1, 
+                                                 rayLength, 
                                                  collisionMask);
 
             Debug.DrawRay(rayOrigin, 
-                          Vector2.left * (rayLength + 1), 
+                          Vector2.left * (rayLength), 
                           Color.red);
 
             if (hit)
@@ -62,11 +65,11 @@ public class CollisionDetector : MonoBehaviour
             rayOrigin += Vector2.up * (horizontalRaySpacing * i);
             RaycastHit2D hit = Physics2D.Raycast(rayOrigin,
                                                  Vector2.right,
-                                                 rayLength + 1,
+                                                 rayLength,
                                                  collisionMask);
 
             Debug.DrawRay(rayOrigin,
-                          Vector2.right * (rayLength + 1),
+                          Vector2.right * (rayLength),
                           Color.red);
 
             if (hit)
@@ -79,7 +82,7 @@ public class CollisionDetector : MonoBehaviour
     void VerticalCollisions()
     {
         //float rayLength = Mathf.Abs(velocity.y) + skinWidth;
-        float rayLength = skinWidth;
+        float rayLength = raySize;
 
         for (int i = 0; i < verticalRayCount; i++)
         {
@@ -87,10 +90,10 @@ public class CollisionDetector : MonoBehaviour
             rayOrigin += Vector2.right * (verticalRaySpacing * i);
             RaycastHit2D hit = Physics2D.Raycast(rayOrigin, 
                                                  Vector2.down, 
-                                                 rayLength + 1, 
+                                                 rayLength, 
                                                  collisionMask);
 
-            Debug.DrawRay(rayOrigin, Vector2.down * (rayLength + 1), Color.red);
+            Debug.DrawRay(rayOrigin, Vector2.down * (rayLength), Color.red);
 
             if (hit)
             {
@@ -104,10 +107,10 @@ public class CollisionDetector : MonoBehaviour
             rayOrigin += Vector2.right * (verticalRaySpacing * i);
             RaycastHit2D hit = Physics2D.Raycast(rayOrigin,
                                                  Vector2.up,
-                                                 rayLength + 1,
+                                                 rayLength,
                                                  collisionMask);
 
-            Debug.DrawRay(rayOrigin, Vector2.up * (rayLength + 1), Color.red);
+            Debug.DrawRay(rayOrigin, Vector2.up * (rayLength), Color.red);
 
             if (hit)
             {
@@ -120,7 +123,7 @@ public class CollisionDetector : MonoBehaviour
     void UpdateRaycastOrigins()
     {
         Bounds bounds = boxCollider.bounds;
-        bounds.Expand(skinWidth * -2);
+        bounds.Expand(0);
 
         raycastOrigins.bottomLeft = new Vector2(bounds.min.x, bounds.min.y);
         raycastOrigins.bottomRight = new Vector2(bounds.max.x, bounds.min.y);
@@ -131,7 +134,7 @@ public class CollisionDetector : MonoBehaviour
     void CalculateRaySpacing()
     {
         Bounds bounds = boxCollider.bounds;
-        bounds.Expand(skinWidth * -2);
+        bounds.Expand(0);
 
         horizontalRayCount = Mathf.Clamp(horizontalRayCount, 2, int.MaxValue);
         verticalRayCount = Mathf.Clamp(verticalRayCount, 2, int.MaxValue);

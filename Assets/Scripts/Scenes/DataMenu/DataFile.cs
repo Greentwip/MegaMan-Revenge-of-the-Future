@@ -29,7 +29,7 @@ public class DataFile : MonoBehaviour {
 
     void SwitchLevel()
     {
-        SceneManager.LoadScene("Scenes/MainMenu");
+        SceneManager.LoadScene("Scenes/StageSelect");
         FadeManager.Instance.Fade(false, 1.5f, null);
     }
 
@@ -46,6 +46,7 @@ public class DataFile : MonoBehaviour {
             if (dataSelector.dataFile != this.file)
             {
                 dataSelector.dataFile = this.file;
+                CurrentGame.Instance.selectedDatafile = this.file;
                 SoundManager.Instance.PlaySingle(selectionSound);
                 dataSelector.transform.position = this.transform.position;
             }
@@ -53,6 +54,9 @@ public class DataFile : MonoBehaviour {
             {
                 if (!this.transitioning)
                 {
+                    dataSelector.dataFile = this.file;
+                    CurrentGame.Instance.selectedDatafile = this.file;
+
                     this.transitioning = true;
                     SoundManager.Instance.PlaySingle(selectedSound);
                     SwitchLevelFade();

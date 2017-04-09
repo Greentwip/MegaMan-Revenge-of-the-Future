@@ -37,7 +37,7 @@ public class HealthBar : MonoBehaviour
     {
         if (ShowHealthBar == true)
         {
-            HealthStatus = health.startHealth / health.MaximumHealth;
+            HealthStatus = health.currentHealth / health.MaximumHealth;
 
             size = new Vector2(Screen.width / 42f, Screen.height / 6f);
 

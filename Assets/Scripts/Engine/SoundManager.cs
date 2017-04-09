@@ -74,11 +74,25 @@ public class SoundManager : MonoBehaviour
 		//Create the source
 		AudioSource source = go.AddComponent<AudioSource>();
 		source.clip = clip;
-		source.Play();
+        source.volume = volumeSfx;
+        source.Play();
 		Destroy(go, clip.length);        
 
         //@TODO
         //set the volume
 	}
+
+    public void SetVolumeSfx(float volume)
+    {
+        volumeSfx = volume;
+    }
+
+    public void SetVolumeBgm(float volume)
+    {
+        AudioSource source = BGM.GetComponent<AudioSource>();
+        source.volume = volume;
+    }
+
+    float volumeSfx = 1.0f;
 }
 

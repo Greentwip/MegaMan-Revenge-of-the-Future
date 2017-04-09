@@ -187,8 +187,6 @@ public class LevelCamera : MonoBehaviour
             {
 
                 var verticalExtent = GetComponent<Camera>().orthographicSize;
-                var horizontalExtent = verticalExtent * Screen.width / Screen.height;
-
 
                 if (playerPos.y <
                     transform.position.y - verticalExtent)
@@ -220,8 +218,6 @@ public class LevelCamera : MonoBehaviour
             {
 
                 var verticalExtent = GetComponent<Camera>().orthographicSize;
-                var horizontalExtent = verticalExtent * Screen.width / Screen.height;
-
 
                 if (playerPos.y >
                     transform.position.y + verticalExtent)

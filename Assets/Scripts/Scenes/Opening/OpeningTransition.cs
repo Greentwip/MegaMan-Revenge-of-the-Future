@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class OpeningTransition : MonoBehaviour {
 
-    public Object nextLevel;
+    public string nextLevel;
 
 	// Use this for initialization
 	void Start () {
