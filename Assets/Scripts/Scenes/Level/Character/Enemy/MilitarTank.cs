@@ -7,9 +7,13 @@ public class MilitarTank : Enemy {
 
     public LayerMask collisionMask;
 
+    public LayerMask groundCollisionMask;
+
     public Rigidbody2D weapon;
 
     private bool attacking = false;
+
+    private int moveVelocity = -50;
 
     IEnumerator AttackRoutine()
     {
@@ -21,14 +25,34 @@ public class MilitarTank : Enemy {
         var bulletPosition = this.transform.position;
 
         bulletPosition.x -= 16;
-        bulletPosition.y += 16;
+
+        if (GetComponent<SpriteRenderer>().flipX)
+        {
+            bulletPosition.y -= 16;
+        }
+        else
+        {
+            bulletPosition.y += 16;
+        }
+        
 
         Rigidbody2D bullet = Instantiate(weapon,
                                          bulletPosition,
                                          transform.rotation);
 
+        int bulletMoveVelocity = 0;
 
-        Vector2 moveVelocity = new Vector2(-2500, 12000);
+        if (GetComponent<SpriteRenderer>().flipX)
+        {
+            bulletMoveVelocity = 2500;
+        }
+        else
+        {
+            bulletMoveVelocity = -2500;
+        }
+
+
+        Vector2 moveVelocity = new Vector2(bulletMoveVelocity, 12000);
 
         bullet.AddForce(moveVelocity);
 
@@ -45,12 +69,22 @@ public class MilitarTank : Enemy {
     protected override void Logic()
     {
         Vector2 rayOrigin = GetComponent<Collider2D>().bounds.center;
-        rayOrigin.x = GetComponent<Collider2D>().bounds.min.x;
+
+        if (GetComponent<SpriteRenderer>().flipX)
+        {
+            rayOrigin.x = GetComponent<Collider2D>().bounds.max.x;
+        }
+        else
+        {
+            rayOrigin.x = GetComponent<Collider2D>().bounds.min.x;
+        }
+
+        
 
         float rayLength = 24;
 
         RaycastHit2D hit = Physics2D.Raycast(rayOrigin,
-                                     Vector2.left,
+                                     GetComponent<SpriteRenderer>().flipX ? Vector2.right : Vector2.left,
                                      rayLength,
                                      collisionMask);
 
@@ -58,7 +92,7 @@ public class MilitarTank : Enemy {
                       Vector2.left * (rayLength), 
                       Color.red);
 
-        if (hit)
+        if (hit.collider != null)
         {
             var velocity = GetComponent<Rigidbody2D>().velocity;
 
@@ -71,15 +105,65 @@ public class MilitarTank : Enemy {
                 StartCoroutine(AttackRoutine());
             }
 
-        } else
+        } 
+        else
         {
+
+            rayOrigin = GetComponent<Collider2D>().bounds.min;
+
+            rayLength = 24;
+
+            hit = Physics2D.Raycast(rayOrigin,
+                                    Vector2.down,
+                                    rayLength,
+                                    groundCollisionMask);
+
+            if (hit.collider == null)
+            {
+                moveVelocity = -moveVelocity;
+            }
+
+            rayOrigin = GetComponent<Collider2D>().bounds.center;
+
+            rayOrigin.x = GetComponent<Collider2D>().bounds.min.x;
+
+            rayLength = 12;
+
+            hit = Physics2D.Raycast(rayOrigin,
+                                    Vector2.left,
+                                    rayLength,
+                                    groundCollisionMask);
+
+            if (hit.collider != null)
+            {
+                moveVelocity = -moveVelocity;
+            }
+
+            rayOrigin = GetComponent<Collider2D>().bounds.center;
+
+            rayOrigin.x = GetComponent<Collider2D>().bounds.max.x;
+
+            rayLength = 12;
+
+            hit = Physics2D.Raycast(rayOrigin,
+                                    Vector2.right,
+                                    rayLength,
+                                    groundCollisionMask);
+
+            if (hit.collider != null)
+            {
+                moveVelocity = -moveVelocity;
+            }
+
+
             var velocity = GetComponent<Rigidbody2D>().velocity;
 
-            velocity.x = -50;
+            velocity.x = moveVelocity;
 
             GetComponent<Rigidbody2D>().velocity = velocity;
         }
 
-        
+        GetComponent<SpriteRenderer>().flipX = moveVelocity > 0;
+
     }
 }

@@ -115,6 +115,11 @@ public abstract class Enemy : MonoBehaviour {
 
                 TakeDamage(bullet.power);
 
+                if(bullet.power <= 2)
+                {
+                    Destroy(bullet.gameObject);
+                }
+
                 if (this.currentHealth > 0)
                 {
                     SoundManager.Instance.PlaySingle(damageSound);
