@@ -61,7 +61,8 @@ public class CurrentGame : MonoBehaviour
                                                             level)) == 1;
         } else
         {
-            throw new PlayerPrefsException("No key was found");
+            //throw new PlayerPrefsException("No key was found");
+            return false;
         }
     }
     

@@ -53,7 +53,7 @@ public class CollisionDetector : MonoBehaviour
                           Vector2.left * (rayLength), 
                           Color.red);
 
-            if (hit)
+            if (hit.collider != null)
             {
                 collisions.left = true;
             }
@@ -72,7 +72,7 @@ public class CollisionDetector : MonoBehaviour
                           Vector2.right * (rayLength),
                           Color.red);
 
-            if (hit)
+            if (hit.collider != null)
             {
                 collisions.right = true;
             }
@@ -95,7 +95,7 @@ public class CollisionDetector : MonoBehaviour
 
             Debug.DrawRay(rayOrigin, Vector2.down * (rayLength), Color.red);
 
-            if (hit)
+            if (hit.collider != null)
             {
                 collisions.below = true;
             }
@@ -112,7 +112,7 @@ public class CollisionDetector : MonoBehaviour
 
             Debug.DrawRay(rayOrigin, Vector2.up * (rayLength), Color.red);
 
-            if (hit)
+            if (hit.collider != null)
             {
                 collisions.above = true;
             }

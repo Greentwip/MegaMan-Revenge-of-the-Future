@@ -5,12 +5,14 @@ using UnityEngine;
 public class Player : MonoBehaviour {
 
     public int jumpForce = 16000;
-    public int walkSpeed = 900;
-    public int slideSpeed = 2200;
+    public int walkSpeed = 450;
+    public int slideSpeed = 1100;
 
     public int topWalkSpeed = 128;
     public int topSlideSpeed = 144;
     public float longSlideDuration = 0.5f;
+
+    public int busterShootSpeed = 300;
 
     public AudioClip busterLowSound = null;
     public Rigidbody2D busterLowWeapon = null;
@@ -168,9 +170,14 @@ public class Player : MonoBehaviour {
         }
 
         // we open the boss door again
-        var bossDoor = FindObjectOfType<BossDoor>();
+        var bossDoors = FindObjectsOfType<BossDoor>();
 
-        bossDoor.Open();
+
+        foreach (var bossDoor in bossDoors)
+        {
+            bossDoor.Open();
+        }
+        
 
 
         // we get the last checkpoint position
@@ -229,7 +236,7 @@ public class Player : MonoBehaviour {
         animator = GetComponent<Animator>();
         controller = GetComponent<Controller>();
 
-        timeToStopAttack = 0.16f + 0.1f;
+        timeToStopAttack = 45f / 60f;
     }
 
     void SetSlideCollisionBox()
@@ -272,7 +279,7 @@ public class Player : MonoBehaviour {
         }
     }
 
-    void FixedUpdate()
+    void Update()
     {
         obstacleDetector.Detect();
        
@@ -362,7 +369,8 @@ public class Player : MonoBehaviour {
                 {
                     moveVelocity.x = walk_direction * walkSpeed;
                 } 
-            } else
+            } 
+            else
             {
                 if (!this.sliding)
                 {
@@ -398,7 +406,7 @@ public class Player : MonoBehaviour {
 
             #endregion
 
-        #region attack
+            #region attack
             this.Attack();
             #endregion
         }
@@ -439,7 +447,7 @@ public class Player : MonoBehaviour {
             this.sliding = false;
         }
 
-        if(transformVelocity.y != 0)
+        if(transformVelocity.y > 0)
         {
             StopCoroutine(Slide(longSlideDuration));
             RestoreSlideCollisionBox();
@@ -454,6 +462,11 @@ public class Player : MonoBehaviour {
         if (obstacleDetector.collisions.above || obstacleDetector.collisions.below)
         {
             transformVelocity.y = 0;
+        }
+
+        if(moveVelocity.x == 0 && !this.sliding)
+        {
+            transformVelocity.x = 0;
         }
 
         GetComponent<Rigidbody2D>().velocity = transformVelocity;
@@ -549,7 +562,6 @@ public class Player : MonoBehaviour {
 
         if (Input.GetButtonDown("Fire"))
         {
-
             if(bulletsShot.Count < 3 && !this.sliding)
             {
                 if (this.attacking)
@@ -606,11 +618,11 @@ public class Player : MonoBehaviour {
 
                 if (this.GetComponent<SpriteRenderer>().flipX)
                 {
-                    velocity.x = -200;
+                    velocity.x = -busterShootSpeed;
                 }
                 else
                 {
-                    velocity.x = 200;
+                    velocity.x = busterShootSpeed;
                 }
 
 
