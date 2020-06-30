@@ -26,6 +26,7 @@ public class LevelCamera : MonoBehaviour
     Vector3 switchTargetPosition = Vector3.zero;
     Vector3 playerSwitchTargetPosition = Vector3.zero;
     Vector3 playerVelocity = Vector3.zero;
+    Vector3 cameraVelocity = Vector3.zero;
 
     float cameraSwitchDuration = 1.0f;
     float playerSwitchDuration = 0.5f;
@@ -92,6 +93,7 @@ public class LevelCamera : MonoBehaviour
             // Make the camera follow the player...
             playerPos = Player.transform.position;
             deltaPos = playerPos - transform.position;
+            Vector3 targetPosition = Vector3.zero;
 
             if (deltaPos.x > xTolerance && canMoveRight)
             {
@@ -99,7 +101,7 @@ public class LevelCamera : MonoBehaviour
 
                 position.x = playerPos.x - (xTolerance * Mathf.Sign(deltaPos.x));
 
-                transform.position = position;
+                targetPosition = position;
             }
             
 
@@ -109,7 +111,7 @@ public class LevelCamera : MonoBehaviour
 
                 position.x = playerPos.x - (xTolerance * Mathf.Sign(deltaPos.x));
 
-                transform.position = position;
+                targetPosition = position;
             }
 
             // Check the y pos 
@@ -119,7 +121,21 @@ public class LevelCamera : MonoBehaviour
 
                 position.y = playerPos.y - (yTolerance * Mathf.Sign(deltaPos.y));
 
-                transform.position = position;
+                targetPosition = position;
+            }
+
+            if(targetPosition != Vector3.zero)
+            {
+                //var smoothPosition = Vector3.SmoothDamp(transform.position, targetPosition, ref cameraVelocity, 2 * Time.deltaTime);
+
+                var smoothPosition = Vector3.Lerp(transform.position, targetPosition, 1f / 30f);
+                //var rigidBody = GetComponent<Rigidbody2D>();
+                //var trunkPos= new Vector3(Mathf.FloorToInt(smoothPosition.x), Mathf.FloorToInt(smoothPosition.y), smoothPosition.z);
+                //rigidBody.MovePosition(smoothPosition);
+                //rigidBody.MovePosition(smoothPosition);
+
+                transform.position = smoothPosition;
+
             }
 
             if (!canMoveRight)

@@ -5,8 +5,8 @@ using UnityEngine;
 public class Player : MonoBehaviour {
 
     public int jumpForce = 16000;
-    public int walkSpeed = 450;
-    public int slideSpeed = 1100;
+    public int walkSpeed;
+    public int slideSpeed;
 
     public int topWalkSpeed = 128;
     public int topSlideSpeed = 144;
